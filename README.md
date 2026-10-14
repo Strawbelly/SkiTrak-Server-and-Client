@@ -25,15 +25,7 @@ APIs provided by Tomcat, plus Gson.
 
 ## Architecture
 
-```
- client (part1 / part2)                                   server: Tomcat 9, /ski-servlet
-
- SwipeProducer ─► ArrayBlockingQueue ─► SwipeWorker pool  ── POST swipe ──►  SkierServlet
- (1 thread)       (10,000)              (shared HttpClient) ◄─ 201 / 4xx ──   /skiers/*
-
- LeaderboardSubscriber × 10                               ── WS connect ──►  LeaderboardEndpoint
- (one per resort)                                         ◄─ push / 500 ms ─  /leaderboard/{resortID}
-```
+<img width="3600" height="3392" alt="Architecture" src="https://github.com/user-attachments/assets/d8682b14-8cc9-456b-81f0-9ea4698ada65" />
 
 ## Prerequisites
 
