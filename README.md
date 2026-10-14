@@ -49,33 +49,23 @@ mvn clean package
 
 ## Run
 
-**1. Deploy the server.** Copy `ski-servlet.war` into Tomcat's `webapps/` and start Tomcat
-(full steps in [server/README.md](server/README.md)). Then check it:
+**1. Deploy the server.** Copy `ski-servlet.war` into Tomcat's `webapps/` directory and start Tomcat (see [server/README.md](server/README.md)).
+
+Verify the server:
 
 ```bash
-curl -i http://<EC2_PUBLIC_IP>:8080/ski-servlet/health             # 200 {"status":"UP"}
-npx wscat -c ws://<EC2_PUBLIC_IP>:8080/ski-servlet/leaderboard/7   # a push every 500 ms
+curl http://<EC2_PUBLIC_IP>:8080/ski-servlet/health
 ```
 
-**2. Run the clients** from the repository root:
+**2. Run the clients** from the repository root (replace `<EC2_PUBLIC_IP>` with your EC2 public IP):
 
 ```bash
-java -jar client-part1/target/ski-client-part1-1.0-SNAPSHOT.jar [baseUrl] [mainWorkers] [totalSwipes]
-java -jar client-part2/target/ski-client-part2-1.0-SNAPSHOT.jar [baseUrl] [mainWorkers] [totalSwipes]
+java -jar client-part1/target/ski-client-part1-1.0-SNAPSHOT.jar http://<EC2_PUBLIC_IP>:8080/ski-servlet 400 532000
+
+java -jar client-part2/target/ski-client-part2-1.0-SNAPSHOT.jar http://<EC2_PUBLIC_IP>:8080/ski-servlet 400 532000
 ```
 
-| Argument | Default |
-|---|---|
-| `baseUrl` | `http://35.162.4.183:8080/ski-servlet` (hard-coded EC2 address; pass your current one) |
-| `mainWorkers` | `400` |
-| `totalSwipes` | `532000`: 32,000 warmup + 500,000 main. The warmup is always 32,000, so the main phase gets `totalSwipes − 32,000`; the value must be greater than 32,000 |
-
-Example: `java -jar client-part2/target/ski-client-part2-1.0-SNAPSHOT.jar http://<EC2_PUBLIC_IP>:8080/ski-servlet 400 | tee results/part2_run.log`
-
-- Part 2 overwrites `results/per_swipe_metrics.csv` and `results/throughput_over_time.png`
-  on each run.
-- If the server can't be reached, a run can take a very long time; stop it with Ctrl+C.
-
+The workload consists of 32,000 warmup swipes and 500,000 main-phase swipes. Part 2 generates `results/per_swipe_metrics.csv` and `results/throughput_over_time.png`.
 ## Client behavior
 
 - **Generation:** one producer thread fills a bounded queue (10,000), and the sender

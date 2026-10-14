@@ -1,6 +1,6 @@
 # SkiTrak Server (Dummy)
 
-One WAR for Tomcat 9 containing three endpoints. The server is intentionally minimal: it validates and acknowledges swipes, and pushes a synthetic leaderboard. It does not aggregate swipe data.
+A minimal WAR for Tomcat 9 with three endpoints. The server validates and acknowledges swipe requests and pushes a synthetic leaderboard. It does not aggregate or store swipe data.
 
 ## Endpoints
 
@@ -8,7 +8,7 @@ One WAR for Tomcat 9 containing three endpoints. The server is intentionally min
 |---|---|---|
 | `POST /skiers/{resortID}/seasons/{seasonID}/days/{dayID}/skiers/{skierID}` | `server.SkierServlet` | Validates a swipe and returns `201 Created` with an empty body |
 | `GET /health` | `server.HealthServlet` | Returns `200 OK` with `{"status":"UP"}` |
-| `WS /leaderboard/{resortID}` | `server.websocket.LeaderboardEndpoint` | Pushes a synthetic top-10 leaderboard to connected subscribers every 500 ms |
+| `WS /leaderboard/{resortID}` | `server.websocket.LeaderboardEndpoint` | Pushes a synthetic top-10 leaderboard approximately every 500 ms |
 
 All paths are relative to the context path `/ski-servlet`.
 
@@ -70,7 +70,7 @@ server/
     └── ski-servlet.war
 ```
 
-The tree above highlights the main server components. Refer to the repository for the complete source structure.
+This tree highlights the main server components. Refer to the repository for the complete source structure.
 
 ## Prerequisites
 
@@ -78,17 +78,17 @@ The tree above highlights the main server components. Refer to the repository fo
 - Maven 3.6 or later
 - Apache Tomcat 9
 - Node.js and npm (only needed for the `wscat` WebSocket test)
-- An AWS EC2 instance if deploying remotely
+- An AWS EC2 instance for remote deployment
 
 ## Build
 
-From the repository root:
+From the repository root, build all modules:
 
 ```bash
 mvn clean package
 ```
 
-Or build the server module from the `server/` directory:
+To build only the server, run this from the `server/` directory:
 
 ```bash
 mvn clean package
@@ -122,8 +122,8 @@ The following instructions use Amazon Linux 2023. Adjust them if your EC2 instan
 
 ### 1. Configure the EC2 instance
 
-- Region: `us-west-2`
-- Instance type: `t2.micro` (subject to availability and current account eligibility)
+- Region: `us-west-2` (or your chosen region)
+- Instance type: choose an available instance type suitable for your workload
 - Security group: allow inbound TCP port `8080` from your testing IP and TCP port `22` from your SSH client IP
 - Key pair: your downloaded `.pem` file
 
@@ -250,4 +250,4 @@ npx wscat -c ws://localhost:8080/ski-servlet/leaderboard/7
 
 - Swipe requests are validated and acknowledged but are not aggregated or stored as skier activity.
 - The leaderboard is synthetic and is not driven by swipe requests.
-- HTTP connection reuse and reconnect behavior depend on the Tomcat connector configuration. Any observed connection limit or its impact on performance should be documented alongside the actual test configuration and results.
+- HTTP connection reuse and reconnect behavior depend on the Tomcat connector configuration. Document observed connection behavior alongside the test configuration and results.
