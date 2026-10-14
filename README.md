@@ -25,7 +25,8 @@ APIs provided by Tomcat, plus Gson.
 
 ## Architecture
 
-<img width="3600" height="3392" alt="Architecture" src="https://github.com/user-attachments/assets/d8682b14-8cc9-456b-81f0-9ea4698ada65" />
+<img width="3600" height="3392" alt="Architecture" src="https://github.com/user-attachments/assets/730a6329-15b7-4256-9e95-a218d4ec3eef" />
+
 
 ## Prerequisites
 
